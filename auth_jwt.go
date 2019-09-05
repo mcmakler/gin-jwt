@@ -225,6 +225,7 @@ func (mw *GinJWTMiddleware) privateKey() error {
 			return ErrInvalidPrivKey
 		}
 		mw.privKey = key
+		return nil
 	}
 
 	key, err := jwt.ParseRSAPrivateKeyFromPEM(keyData)
