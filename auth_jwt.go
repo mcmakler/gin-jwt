@@ -102,6 +102,9 @@ type GinJWTMiddleware struct {
 	// Private key
 	privKey *rsa.PrivateKey
 
+	// Passphrase for private key
+	PrivateKeyPassphrase string
+
 	// Public key
 	pubKey *rsa.PublicKey
 
@@ -215,6 +218,15 @@ func (mw *GinJWTMiddleware) privateKey() error {
 	if err != nil {
 		return ErrNoPrivKeyFile
 	}
+
+	if mw.PrivateKeyPassphrase != "" {
+		key, err := jwt.ParseRSAPrivateKeyFromPEMWithPassword(keyData, mw.PrivateKeyPassphrase)
+		if err != nil {
+			return ErrInvalidPrivKey
+		}
+		mw.privKey = key
+	}
+
 	key, err := jwt.ParseRSAPrivateKeyFromPEM(keyData)
 	if err != nil {
 		return ErrInvalidPrivKey
